@@ -19,6 +19,7 @@ string read(string name)
 
     return data;
 }
+
 void write(string name, string data)
 {
     ofstream file;
@@ -32,6 +33,36 @@ void write(string name, string data)
         cout << "Error al abrir el archivo." << endl;
         exit(1);
     }
+}
+
+string first_method(string data, int seed)
+{
+    string encryptedData;
+    string binaryData = text_to_binary(data);
+    int countOne = 0, countZero = 0, module;
+    string block;
+    while (binaryData.length()){
+
+        block = binaryData.substr(0, seed);
+        if (countZero == countOne) module = 1;
+        else if (countZero > countOne) module = 2;
+        else module = 3;
+
+        for (int i=1; i<=seed; ++i){
+            if (i % module == 0){
+                block[i-1] == '0' ? encryptedData += '1' : encryptedData += '0';
+                continue;
+            }
+            encryptedData += block[i-1];
+        }
+    countOne = countZero = 0;
+        for (int i=0; i<seed; ++i){
+            block[i] == '0' ? countZero++ : countOne++;
+        }
+
+        binaryData = binaryData.substr(seed, binaryData.length()-1);
+    }
+    return encryptedData;
 }
 string text_to_binary(string text)
 {
@@ -48,3 +79,4 @@ string text_to_binary(string text)
     }
 
     return binary;
+}
