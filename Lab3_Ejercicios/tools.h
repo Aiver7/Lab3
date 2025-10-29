@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <math.h>
 #include <string>
 
 #define RESET "\e[0m"
@@ -16,12 +17,32 @@
 
 using namespace std;
 
-int menu(void);
+int menu(int type);
+
+/*! Esta fucion es la encargada de leer un archivo */
 string read(string name);
+
+/*! Esta fucion es la encargada de escribir en un archivo */
 void write(string name, string data);
-string first_method(string data,int seed);
-string second_method(string data,int seed);
+
+/*! Esta fucion encriptara datos binarios usando el primer metodo de encriptacion */
+string encrypt_first_method(string binary, size_t seed);
+
+/*! Esta fucion dencriptara datos binarios que fueron codificados usando
+ *  el primer metodo de encriptacion */
+string decrypt_first_method(string binary, size_t seed);
+
+/*! Esta fucion encriptara datos binarios usando el segundo metodo de encriptacion */
+string encrypt_second_method(string binary, size_t seed);
+
+/*! Esta fucion dencriptara datos binarios que fueron codificados usando
+ *  el segundo metodo de encriptacion */
+string decrypt_second_method(string binary, size_t seed);
+
+/*! Esta funcion se encarga de pasar un texto a su equivalente en binario */
 string text_to_binary(string text);
+
+/*! Esta funcion se encarga de pasar datos binarios a su equivalente en texto o ASCII */
 string binary_to_text(string binary);
 
 #endif // TOOLS_H
