@@ -1,19 +1,40 @@
 #include "tools.h"
 
+int menu()
+{
+    string option;
+
+    while(true){
+        cout << "Menu:\n"
+            "  1. Primer metodo.\n"
+            "  2. Segundo metodo.\n"
+            " Opcion: ";
+        cin >> option;
+
+        system("cls");
+        if(option[0] < 49 || option[0] > 50 || option.length() > 1){
+            cout << "Opcion no valida, Intente de nuevo.\n" << endl;
+        }else break;
+    }
+
+    return stoi(option);
+}
+
 string read(string name)
 {
     ifstream file;
-    string data;
+    string data, aux;
 
-    file.open(name);
+    file.open("../data/" + name);
     if (file.is_open()){
         while (!file.eof()) {
-            data += file.get();
+            getline(file, aux);
+            data += aux;
         }
         file.close();
     }
     else{
-        cout << "Error al abrir el archivo." << endl;
+        cout << "Error al abrir el archivo " << name << RESET << endl;
         exit(1);
     }
 
@@ -24,13 +45,13 @@ void write(string name, string data)
 {
     ofstream file;
 
-    file.open(name);
+    file.open("../data/" + name);
     if (file.is_open()){
         file << data;
         file.close();
     }
     else{
-        cout << "Error al abrir el archivo." << endl;
+        cout << "Error al crar o abrir el archivo." << endl;
         exit(1);
     }
 }
@@ -107,4 +128,25 @@ string text_to_binary(string text)
     }
 
     return binary;
+}
+
+string binary_to_text(string binary)
+{
+    int ascii;
+    string text, bin_to_char;
+
+    while(binary.length()){
+        bin_to_char = binary.substr(0, 8);
+        reverse(bin_to_char.begin(), bin_to_char.end());
+
+        ascii = 0;
+        for(int i=0; i<8; ++i){
+            ascii += (int(bin_to_char[i]) - 48)*pow(2, i);
+        }
+        text += char(ascii);
+
+        binary = binary.substr(8, binary.length());
+    }
+
+    return text;
 }
