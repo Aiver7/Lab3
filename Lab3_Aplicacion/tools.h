@@ -39,10 +39,20 @@ struct System
     admin *_admins_;
     user *_users_;
 
+    System();
+
     void loadAdmins(void);
     void loadUsers(void);
+
     void addAdmin(admin new_admin);
     void addUser(user new_user);
+
+    int is_admin(string id);
+    int is_user(string id);
+
+    bool checkAdminPassword(string id, string password);
+    bool checkUserPassword(string id, string password);
+
 };
 
 /*! Esta fucion es la encargada de leer un archivo */

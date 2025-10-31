@@ -1,5 +1,108 @@
 #include "tools.h"
 
+System::System()
+{
+    num_admins = 0;
+    num_users = 0;
+    _admins_ = nullptr;
+    _users_ = nullptr;
+}
+
+void System::loadAdmins()
+{
+    string data = binary_to_text(decrypt_first_method(read("sudo.txt"), USEED)) + '\n';
+    string data_admin;
+    admin aux_admin;
+    size_t index;
+
+    while(data.length()){
+        index = data.find('\n');
+        data_admin = data.substr(0, index);
+
+        aux_admin.ID = data_admin.substr(0, data_admin.find(','));
+        aux_admin.password = data_admin.substr(data.find(',')+1, data_admin.length());
+
+        addAdmin(aux_admin);
+
+        data = data.substr(index+1, data.length());
+    }
+}
+
+void System::loadUsers()
+{
+    string data = binary_to_text(decrypt_first_method(read("users.txt"), USEED)) + '\n';
+    string data_user;
+    user aux_user;
+    size_t index;
+
+    while(data.length()){
+        index = data.find('\n');
+        data_user = data.substr(0, index);
+
+        aux_user.ID = data_user.substr(0, data_user.find(','));
+        data_user = data_user.substr(data_user.find(',')+1, data_user.length());
+        aux_user.password = data_user.substr(0, data_user.find(','));
+        aux_user.money = stoi(data_user.substr(data_user.find(',')+1, data_user.length()));
+
+        addUser(aux_user);
+
+        data = data.substr(index+1, data.length());
+    }
+
+}
+
+void System::addAdmin(admin new_admin)
+{
+    admin *copy_admins = new admin[num_admins];
+
+    for(size_t i=0; i < num_admins; ++i){ copy_admins[i] = _admins_[i]; }
+
+    delete[] _admins_;
+
+    _admins_ = new admin[num_admins+1];
+    for(size_t i=0; i < num_admins; ++i){ _admins_[i] = copy_admins[i]; }
+
+    delete[] copy_admins;
+
+    _admins_[num_admins] = new_admin;
+    num_admins++;
+}
+
+void System::addUser(user new_user)
+{
+    user *copy_users = new user[num_users];
+
+    for(size_t i=0; i < num_users; ++i){ copy_users[i] = _users_[i]; }
+
+    delete[] _users_;
+
+    _users_ = new user[num_users+1];
+    for(size_t i=0; i < num_users; ++i){ _users_[i] = copy_users[i]; }
+
+    delete[] copy_users;
+
+    _users_[num_users] = new_user;
+    num_users++;
+}
+
+int System::is_admin(string id)
+{
+    for(size_t i=0; i < num_admins; ++i){
+        if(_admins_[i].ID == id){ return true; }
+    }
+
+    return false;
+}
+
+int System::is_user(string id)
+{
+    for(size_t i=0; i < num_users; ++i){
+        if(_users_[i].ID == id){ return true; }
+    }
+
+    return false;
+}
+
 string read(string name)
 {
     // name es el nombre del archivo a leer
@@ -17,7 +120,7 @@ string read(string name)
 
             /* Se guarda la linea del archivo y se le agrega un salto de linea ya que la
              * funcion anterior los ignora*/
-            data += aux + '\n';
+            data += aux;
         }
 
         file.close(); // Se cierra el archivo
