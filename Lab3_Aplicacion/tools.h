@@ -15,6 +15,8 @@
 #define MAGENTA "\e[0;35m"
 #define CYAN "\e[0;36m"
 
+#define USEED 4 // Esta es la semilla universal
+
 using namespace std;
 
 struct admin
@@ -30,7 +32,33 @@ struct user
     size_t money;
 };
 
+struct System
+{
+    size_t num_admins;
+    size_t num_users;
+    admin *_admins_;
+    user *_users_;
+
+    void loadAdmins(void);
+    void loadUsers(void);
+    void addAdmin(admin new_admin);
+    void addUser(user new_user);
+};
+
 /*! Esta fucion es la encargada de leer un archivo */
 string read(string name);
+
+/*! Esta fucion encriptara datos binarios usando el primer metodo de encriptacion */
+string encrypt_first_method(string binary, size_t seed);
+
+/*! Esta fucion dencriptara datos binarios que fueron codificados usando
+ *  el primer metodo de encriptacion */
+string decrypt_first_method(string binary, size_t seed);
+
+/*! Esta funcion se encarga de pasar un texto a su equivalente en binario */
+string text_to_binary(string text);
+
+/*! Esta funcion se encarga de pasar datos binarios a su equivalente en texto o ASCII */
+string binary_to_text(string binary);
 
 #endif // TOOLS_H
