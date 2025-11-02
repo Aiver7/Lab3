@@ -8,6 +8,12 @@ System::System()
     _users_ = nullptr;
 }
 
+void System::load()
+{
+    loadAdmins();
+    loadUsers();
+}
+
 void System::loadAdmins()
 {
     string data = binary_to_text(decrypt_first_method(read("sudo.txt"), USEED)) + '\n';
@@ -88,19 +94,99 @@ void System::addUser(user new_user)
 int System::is_admin(string id)
 {
     for(size_t i=0; i < num_admins; ++i){
-        if(_admins_[i].ID == id){ return true; }
+        if(_admins_[i].ID == id){ return i; }
     }
 
-    return false;
+    return -1;
 }
 
 int System::is_user(string id)
 {
     for(size_t i=0; i < num_users; ++i){
-        if(_users_[i].ID == id){ return true; }
+        if(_users_[i].ID == id){ return i; }
     }
 
+    return -1;
+}
+
+bool System::checkAdminPassword(string id, string password)
+{
+    if(_admins_[is_admin(id)].password == password){ return true; }
+
     return false;
+}
+
+bool System::checkUserPassword(string id, string password)
+{
+    if(_users_[is_user(id)].password == password){ return true; }
+
+    return false;
+}
+
+void System::saveAdmins()
+{
+    string data;
+
+    for(size_t i=0; i < num_admins; ++i){
+        data += _admins_[i].ID + "," + _admins_[i].password + '\n';
+    } data.pop_back();
+
+    write("sudo.txt", encrypt_first_method(text_to_binary(data), USEED));
+}
+
+void System::saveUsers()
+{
+    string data;
+
+    for(size_t i=0; i < num_users; ++i){
+        data += _users_[i].ID + "," + _users_[i].password + "," + to_string(_users_[i].money) + '\n';
+    } data.pop_back();
+
+    write("users.txt", encrypt_first_method(text_to_binary(data), USEED));
+}
+
+void System::save()
+{
+    saveAdmins();
+    saveUsers();
+}
+
+int menu(int type)
+{
+    // type es el menu que debe ser mostrado
+
+    string option; // Esta es la opcion tomada por el usuario
+
+    while(true){
+        if(type == 0){
+            /* Se imprime el menu principal para type 0 */
+            cout << GREEN "Menu:\n"
+                CYAN  "  1. Usuario administrador.\n"
+                          "  2. Usuario corriente.\n"
+                GREEN " Opcion: ";
+        }else if(type == 1){ /* Se imprime el menu principal para type 1 */
+            cout << GREEN "Que desea hacer?\n"
+                CYAN  "  1. Agregar usuario.\n"
+                          "  2. Cancelar / Salir.\n"
+                GREEN " Opcion: ";
+        }else{
+            cout << GREEN "Que desea hacer?\n"
+                CYAN  "  1. Consultar saldo.\n"
+                          "  2. Retirar saldo.\n"
+                GREEN " Opcion: ";
+        }
+
+        cin >> option; cin.ignore(); // Se toma la opcion ingresada
+
+        system("cls"); // Se limpia la consola
+
+        /* Se valida la opcion ingresada */
+        if(option[0] < 49 || option[0] > 50 || option.length() > 1){
+            cout << RED "Opcion no valida, Intente de nuevo.\n" << endl;
+        }else{ break; }
+    }
+
+    return stoi(option); // Se retorna la opcion tomada por el usuario
 }
 
 string read(string name)
@@ -131,6 +217,26 @@ string read(string name)
     }
 
     return data; // Se retorna el contenido del archivo
+}
+
+void write(string name, string data)
+{
+    // name es el nombre del archivo en el que se escribira
+    // data sera el contenido del archivo
+
+    ofstream file; // Archivo a escribir
+
+    file.open("../data/" + name); // Se abre el archivo
+    if (file.is_open()){ // Se verifica si el archivo abrio correctamente
+
+        file << data; // Se escribe en el archivo
+
+        file.close(); // Se cierra el archivo
+    }
+    else{ // Si el archivo no se pudo abrir se muestra el mensaje correspondiente y finaliza el programa
+        cout << RED "Error al crear o abrir el archivo " << name << RESET << endl;
+        exit(1);
+    }
 }
 
 string encrypt_first_method(string binary, size_t seed)

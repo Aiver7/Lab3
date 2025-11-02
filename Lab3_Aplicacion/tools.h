@@ -41,6 +41,7 @@ struct System
 
     System();
 
+    void load(void);
     void loadAdmins(void);
     void loadUsers(void);
 
@@ -53,10 +54,19 @@ struct System
     bool checkAdminPassword(string id, string password);
     bool checkUserPassword(string id, string password);
 
+    void saveAdmins(void);
+    void saveUsers(void);
+    void save();
 };
+
+/*! Esta fucion es la encargada de imprimer los menus de la aplicacion */
+int menu(int type);
 
 /*! Esta fucion es la encargada de leer un archivo */
 string read(string name);
+
+/*! Esta fucion es la encargada de escribir en un archivo */
+void write(string name, string data);
 
 /*! Esta fucion encriptara datos binarios usando el primer metodo de encriptacion */
 string encrypt_first_method(string binary, size_t seed);
